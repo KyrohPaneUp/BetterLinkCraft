@@ -1,0 +1,16 @@
+[
+{
+  "modid": "betterlinkcraft",
+  "name": "BetterLinkCraft",
+  "description": "This is a mod which improves your LinkCraft experience.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["KyrohPaneUp"],
+  "credits": "The StratReminders are partially made by Texyle.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
