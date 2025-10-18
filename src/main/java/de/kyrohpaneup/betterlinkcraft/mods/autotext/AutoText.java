@@ -15,14 +15,12 @@ public class AutoText {
         this.output = output;
     }
 
-    // Alternative Konstruktor für String-Keys
     public AutoText(String name, String keyName, String output) {
         this.name = name;
         this.key = Keyboard.getKeyIndex(keyName.toUpperCase());
         this.output = output;
     }
 
-    // Getter und Setter
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 

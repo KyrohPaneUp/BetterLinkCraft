@@ -55,9 +55,13 @@ public class DrawUtils {
         double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * (double)partialTicks;
         double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * (double)partialTicks;
         double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * (double)partialTicks;
-        double x = (double)blockX + 0.5D - viewerX;
+        double x = (double)blockX - viewerX;
         double y = (double)blockY - viewerY - (double)viewer.getEyeHeight();
-        double z = (double)blockZ + 0.5D - viewerZ;
+        double z = (double)blockZ - viewerZ;
+
+        x = blockX >= 0 ? x + 0.5D : x - 0.5D;
+        z = blockZ >= 0 ? z + 0.5D : z - 0.5D;
+
         double distSq = x * x + y * y + z * z;
         double dist = Math.sqrt(distSq);
         if (!(distSq > 144.0D)) {
