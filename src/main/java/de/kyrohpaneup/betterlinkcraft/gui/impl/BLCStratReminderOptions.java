@@ -6,7 +6,6 @@ import de.kyrohpaneup.betterlinkcraft.gui.elements.BLCOptionButton;
 import de.kyrohpaneup.betterlinkcraft.gui.elements.BLCOptionSlider;
 import de.kyrohpaneup.betterlinkcraft.gui.impl.options.BLCSetStringMenu;
 import de.kyrohpaneup.betterlinkcraft.managers.ChatManager;
-import de.kyrohpaneup.betterlinkcraft.managers.SheetManager;
 import de.kyrohpaneup.betterlinkcraft.managers.StratReminderManager;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
@@ -23,7 +22,7 @@ public class BLCStratReminderOptions extends StringGui {
     private static final Option[] options = new Option[] {Option.SHOW_REMINDERS, Option.SELECTED_SR_MAP};
     private final GuiScreen parentScreen;
     private String title;
-    private StratReminderManager srm;
+    private final StratReminderManager srm;
 
     public BLCStratReminderOptions(GuiScreen parentScreenIn) {
         this.parentScreen = parentScreenIn;
@@ -40,7 +39,7 @@ public class BLCStratReminderOptions extends StringGui {
 
         for (Option blcsettings$options : options) {
             if (blcsettings$options.getType() == OptionType.FLOAT) {
-                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options, (Float) blcsettings$options.getMinValue(), (Float) blcsettings$options.getMaxValue()));
+                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options));
             }
             else {
                 this.buttonList.add(new BLCOptionButton(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options));

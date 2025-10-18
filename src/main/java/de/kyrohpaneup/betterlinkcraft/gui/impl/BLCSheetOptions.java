@@ -23,9 +23,6 @@ import java.util.stream.IntStream;
 
 public class BLCSheetOptions extends GuiScreen {
 
-    private final String tagSheetUrl = "https://docs.google.com/spreadsheets/d/1DaA4u1ybNF0Vb50vu_X-XUrpdvf12pvKCoNucdV1XSc/edit";
-    private final String stratSheetUrl = "https://docs.google.com/spreadsheets/d/1IJKfGsxa-vg3_EoVc8y5E0fek_bTSzawAaNMfFsfja0/edit?usp=sharing";
-
     private final GuiScreen parentScreen;
     private String title;
 
@@ -54,6 +51,7 @@ public class BLCSheetOptions extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
+        this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -74,10 +72,12 @@ public class BLCSheetOptions extends GuiScreen {
                 return;
             }
             if (id == 1) {
+                String tagSheetUrl = "https://docs.google.com/spreadsheets/d/1DaA4u1ybNF0Vb50vu_X-XUrpdvf12pvKCoNucdV1XSc/edit";
                 openLink(tagSheetUrl, "Tag Sheet");
                 return;
             }
             if (id == 2) {
+                String stratSheetUrl = "https://docs.google.com/spreadsheets/d/1IJKfGsxa-vg3_EoVc8y5E0fek_bTSzawAaNMfFsfja0/edit?usp=sharing";
                 openLink(stratSheetUrl, "Strat Sheet");
                 return;
             }

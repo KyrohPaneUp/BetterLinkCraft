@@ -16,26 +16,24 @@ public class GuiSheetViewer extends GuiScreen {
 
     public final GoogleSheetsAPI.SheetData sheetData;
     private int scrollOffset = 0;
-    private int baseRowHeight = 20;
-    private int columnWidth = 100;
-    private int headerHeight = 30;
-    private int visibleRows;
-    private int visibleColumns;
+    private final int baseRowHeight = 20;
+    private final int columnWidth = 100;
+    private final int headerHeight = 30;
     private int startX, startY;
     private int tableWidth, tableHeight;
     private boolean isDraggingScrollbar = false;
-    private int scrollbarWidth = 8;
+    private final int scrollbarWidth = 8;
     private int scrollbarHeight;
     private int scrollbarX, scrollbarY;
     private int maxScrollOffset;
     private int horizontalScrollOffset = 0;
     private int maxHorizontalScrollOffset = 0;
     private boolean isDraggingHorizontalScrollbar = false;
-    private int horizontalScrollbarHeight = 8;
+    private final int horizontalScrollbarHeight = 8;
     private int horizontalScrollbarY;
 
-    private List<Integer> rowHeights = new ArrayList<>();
-    private List<Integer> rowPositions = new ArrayList<>();
+    private final List<Integer> rowHeights = new ArrayList<>();
+    // private final List<Integer> rowPositions = new ArrayList<>();
     private int totalContentHeight = 0;
 
     public GuiSheetViewer(GoogleSheetsAPI.SheetData sheetData) {
@@ -44,12 +42,9 @@ public class GuiSheetViewer extends GuiScreen {
         calculateRowHeights();
     }
 
-    /**
-     * Berechnet die Höhe für jede Zeile basierend auf dem Inhalt
-     */
     private void calculateRowHeights() {
         rowHeights.clear();
-        rowPositions.clear();
+        // rowPositions.clear();
         totalContentHeight = 0;
 
         if (sheetData == null || sheetData.data == null) return;
@@ -77,7 +72,7 @@ public class GuiSheetViewer extends GuiScreen {
             rowHeight = Math.max(baseRowHeight, rowHeight);
 
             rowHeights.add(rowHeight);
-            rowPositions.add(totalContentHeight);
+            // rowPositions.add(totalContentHeight);
             totalContentHeight += rowHeight;
         }
     }
@@ -110,35 +105,9 @@ public class GuiSheetViewer extends GuiScreen {
         return lines;
     }
 
-    /**
-     * Gibt die Zeilenhöhe für eine bestimmte Zeile zurück
-     */
     private int getRowHeight(int row) {
         if (row < 0 || row >= rowHeights.size()) return baseRowHeight;
         return rowHeights.get(row);
-    }
-
-    /**
-     * Gibt die Y-Position einer Zeile im Gesamtinhalt zurück
-     */
-    private int getRowPosition(int row) {
-        if (row < 0 || row >= rowPositions.size()) return 0;
-        return rowPositions.get(row);
-    }
-
-    /**
-     * Findet die Zeile basierend auf der Scroll-Position
-     */
-    private int findRowAtScrollPosition(int scrollPixels) {
-        if (rowPositions.isEmpty()) return 0;
-
-        for (int i = 0; i < rowPositions.size() - 1; i++) {
-            if (scrollPixels >= rowPositions.get(i) && scrollPixels < rowPositions.get(i + 1)) {
-                return i;
-            }
-        }
-
-        return rowPositions.size() - 1;
     }
 
     @Override
@@ -153,8 +122,6 @@ public class GuiSheetViewer extends GuiScreen {
         startY = 50;
         tableWidth = screenWidth - 100;
         tableHeight = screenHeight - 100;
-
-        visibleColumns = tableWidth / columnWidth;
 
         scrollbarX = startX + tableWidth - scrollbarWidth;
         scrollbarY = startY + headerHeight;
@@ -189,11 +156,11 @@ public class GuiSheetViewer extends GuiScreen {
 
         drawRect(startX, startY, startX + tableWidth, startY + tableHeight, 0x80000000);
 
-        drawHeader(mouseX, mouseY);
+        drawHeader();
 
         GlStateManager.pushMatrix();
         GlStateManager.enableDepth();
-        drawData(mouseX, mouseY);
+        drawData();
         GlStateManager.disableDepth();
         GlStateManager.popMatrix();
 
@@ -206,7 +173,7 @@ public class GuiSheetViewer extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    private void drawHeader(int mouseX, int mouseY) {
+    private void drawHeader() {
         drawRect(startX, startY, startX + tableWidth, startY + headerHeight, 0x80666666);
 
         drawRect(startX, startY + headerHeight - 1, startX + tableWidth, startY + headerHeight, 0xFFCCCCCC);
@@ -260,7 +227,6 @@ public class GuiSheetViewer extends GuiScreen {
                             int visibleTextEndX = Math.min(textEndX, startX + tableWidth - scrollbarWidth);
 
                             if (textX < startX + 30) {
-                                int hiddenLeftWidth = startX + 30 - textX;
                                 String visibleText = getVisibleTextFromRight(displayText, visibleTextEndX - visibleTextStartX);
                                 if (!visibleText.isEmpty()) {
                                     drawString(fontRendererObj, visibleText, visibleTextStartX, startY + (headerHeight - 8) / 2, 0xFFFFFF);
@@ -300,7 +266,7 @@ public class GuiSheetViewer extends GuiScreen {
         return "...";
     }
 
-    private void drawData(int mouseX, int mouseY) {
+    private void drawData() {
         if (sheetData.data.length <= 1) return;
 
         int startRow = 1;

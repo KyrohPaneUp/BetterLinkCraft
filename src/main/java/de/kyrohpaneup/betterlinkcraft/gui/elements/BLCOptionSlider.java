@@ -15,20 +15,12 @@ public class BLCOptionSlider extends GuiButton {
     private float sliderValue;
     public boolean isDragging;
 
-    private Option option;
-    private final float minValue;
-    private final float maxValue;
+    private final Option option;
 
     public BLCOptionSlider(int buttonId, int x, int y, Option option) {
-        this(buttonId, x, y, option, 0.0F, 1.0F);
-    }
-
-    public BLCOptionSlider(int buttonId, int x, int y, Option option, float min, float max) {
         super(buttonId, x, y, 150, 20, "");
         this.sliderValue = 1.0F;
         this.option = option;
-        this.minValue = min;
-        this.maxValue = max;
 
         this.sliderValue = option.getFloatValue();
         this.displayString = option.getDisplayString();

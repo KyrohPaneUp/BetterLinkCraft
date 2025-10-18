@@ -34,7 +34,7 @@ public class BLCChatOptions extends GuiScreen
 
         for (Option blcsettings$options : options) {
             if (blcsettings$options.getType() == OptionType.FLOAT) {
-                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options, (Float) blcsettings$options.getMinValue(), (Float) blcsettings$options.getMaxValue()));
+                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options));
             }
             else {
                 this.buttonList.add(new BLCOptionButton(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options));

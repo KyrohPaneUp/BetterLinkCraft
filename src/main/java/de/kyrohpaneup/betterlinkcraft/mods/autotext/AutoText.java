@@ -7,17 +7,10 @@ public class AutoText {
     private String name;
     private int key;
     private String output;
-    private String temporaryType;
 
     public AutoText(String name, int key, String output) {
         this.name = name;
         this.key = key;
-        this.output = output;
-    }
-
-    public AutoText(String name, String keyName, String output) {
-        this.name = name;
-        this.key = Keyboard.getKeyIndex(keyName.toUpperCase());
         this.output = output;
     }
 
@@ -26,13 +19,9 @@ public class AutoText {
 
     public int getKey() { return key; }
     public void setKey(int key) { this.key = key; }
-    public void setKey(String keyName) { this.key = Keyboard.getKeyIndex(keyName.toUpperCase()); }
 
     public String getOutput() { return output; }
     public void setOutput(String output) { this.output = output; }
-
-    public String getTemporaryType() { return temporaryType; }
-    public void setTemporaryType(String type) { this.temporaryType = type; }
 
     public String getKeyName() {
         return Keyboard.getKeyName(key);

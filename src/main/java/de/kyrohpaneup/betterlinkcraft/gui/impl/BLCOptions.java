@@ -20,8 +20,6 @@ public class BLCOptions extends GuiScreen {
         int i = -16;
         int j = 98;
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + i, "General Settings"));
-        //this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, "Practice Settings"));
-        //this.buttonList.add(new GuiButton(2, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, "Placeholder"));
         this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, "StratReminders"));
         this.buttonList.add(new GuiButton(4, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, "Sheets"));
         this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 72 + i, 200, 20, "Chat Settings"));

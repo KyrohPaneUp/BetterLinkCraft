@@ -34,7 +34,7 @@ public class BLCGeneralOptions extends GuiScreen {
 
         for (Option blcsettings$options : options) {
             if (blcsettings$options.getType() == OptionType.FLOAT) {
-                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options, (Float) blcsettings$options.getMinValue(), (Float) blcsettings$options.getMaxValue()));
+                this.buttonList.add(new BLCOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options));
             } else if (blcsettings$options.getType() == OptionType.DOUBLE) {
                 this.buttonList.add(new BLCDoubleOptionSlider(blcsettings$options.ordinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), blcsettings$options, (double) blcsettings$options.getMinValue(), (double) blcsettings$options.getMaxValue()));
             }

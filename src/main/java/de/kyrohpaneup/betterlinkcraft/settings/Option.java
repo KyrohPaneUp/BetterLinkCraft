@@ -21,13 +21,13 @@ public enum Option {
     FULLBRIGHT_ENABLED(OptionType.BOOLEAN, false, "Full Bright", "Turns the gamma up a lot"),
     UGIS_PRAC_DELAY(OptionType.DOUBLE, 2.0, 0.0, 5.0, "Quick Practice Delay", "Delay before teleporting to your LC Location when using quick practice");
 
-    private OptionType type;
+    private final OptionType type;
     private Object value;
-    private Object defaultValue;
+    private final Object defaultValue;
     private Object minValue;
     private Object maxValue;
-    private String name;
-    private String comment;
+    private final String name;
+    private final String comment;
 
     Option(OptionType type, Object value, String name, String comment) {
         this.type = type;

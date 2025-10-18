@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ControlPreset {
     private String name;
-    private Map<String, Integer> bindings;
+    private final Map<String, Integer> bindings;
     private float sensitivity;
 
     public ControlPreset(String name) {
