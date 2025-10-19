@@ -19,7 +19,8 @@ public enum Option {
     TIMER_ENABLED(OptionType.BOOLEAN, false, "Show Timer", "displays a timer in the top right which can be started/stopped via hotkeys"),
     SELECTED_SPEEDRUN_MAP(OptionType.STRING, "default", "Current Map", "This defines which Speedrun Segments will be used"),
     FULLBRIGHT_ENABLED(OptionType.BOOLEAN, false, "Full Bright", "Turns the gamma up a lot"),
-    UGIS_PRAC_DELAY(OptionType.DOUBLE, 2.0, 0.0, 5.0, "Quick Practice Delay", "Delay before teleporting to your LC Location when using quick practice");
+    UGIS_PRAC_DELAY(OptionType.DOUBLE, 2.0, 0.0, 5.0, "Quick Practice Delay", "Delay before teleporting to your LC Location when using quick practice"),
+    CUSTOM_GG_TEXT(OptionType.STRING, "&6&lG&e&lG", "Custom GG", "Custom GG");
 
     private final OptionType type;
     private Object value;

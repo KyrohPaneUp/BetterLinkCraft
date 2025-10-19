@@ -85,7 +85,7 @@ public class BLCSheetOptions extends GuiScreen {
                 this.mc.displayGuiScreen(new BLCSheetListMenu(this));
             }
             if (id == 4) {
-                if (SheetManager.DATA == null) {
+                if (SheetManager.DATA == null || !String.valueOf(SheetManager.DATA.sheet.id).equals(Option.SELECTED_SHEET.getStringValue())) {
                     SheetManager.DATA = GoogleSheetsAPI.getSheetData(Option.SELECTED_SHEET.getStringValue());
                 }
 

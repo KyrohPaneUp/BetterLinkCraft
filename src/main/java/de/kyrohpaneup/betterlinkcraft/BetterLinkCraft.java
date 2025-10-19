@@ -3,6 +3,7 @@ package de.kyrohpaneup.betterlinkcraft;
 import de.kyrohpaneup.betterlinkcraft.chat.HideChatMessages;
 import de.kyrohpaneup.betterlinkcraft.gui.GuiMenuExtension;
 import de.kyrohpaneup.betterlinkcraft.managers.*;
+import de.kyrohpaneup.betterlinkcraft.mods.autotext.CustomCommand;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.FullBright;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.InventoryJam;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
@@ -33,6 +34,7 @@ public class BetterLinkCraft {
     private StratReminderManager srm;
     private TimerManager timerManager;
     private AutoTextManager autoTextManager;
+    private CustomCommandManager customCommandManager;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -47,6 +49,7 @@ public class BetterLinkCraft {
         keybindManager = new KeybindManager();
         timerManager = new TimerManager();
         autoTextManager = new AutoTextManager();
+        customCommandManager = new CustomCommandManager();
         this.srm = new StratReminderManager(configManager);
         MinecraftForge.EVENT_BUS.register(keybindManager);
         MinecraftForge.EVENT_BUS.register(new GuiMenuExtension());
@@ -97,4 +100,6 @@ public class BetterLinkCraft {
     public AutoTextManager getAutoTextManager() {
         return autoTextManager;
     }
+
+    public CustomCommandManager getCustomCommandManager() { return customCommandManager; }
 }

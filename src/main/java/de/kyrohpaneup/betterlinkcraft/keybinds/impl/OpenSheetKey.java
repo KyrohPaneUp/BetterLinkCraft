@@ -16,7 +16,7 @@ public class OpenSheetKey extends BLCKeybind {
 
     @Override
     public void onPressed() {
-        if (SheetManager.DATA == null) {
+        if (SheetManager.DATA == null || !String.valueOf(SheetManager.DATA.sheet.id).equals(Option.SELECTED_SHEET.getStringValue())) {
             SheetManager.DATA = GoogleSheetsAPI.getSheetData(Option.SELECTED_SHEET.getStringValue());
         }
 

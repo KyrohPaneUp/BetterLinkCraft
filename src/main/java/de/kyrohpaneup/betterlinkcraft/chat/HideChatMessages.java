@@ -1,12 +1,31 @@
 package de.kyrohpaneup.betterlinkcraft.chat;
 
+import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
 import de.kyrohpaneup.betterlinkcraft.managers.ChatManager;
+import de.kyrohpaneup.betterlinkcraft.managers.CommandManager;
+import de.kyrohpaneup.betterlinkcraft.managers.CustomCommandManager;
 import de.kyrohpaneup.betterlinkcraft.managers.LinkCraftManager;
+import de.kyrohpaneup.betterlinkcraft.mods.autotext.CustomCommand;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
+
+import java.lang.reflect.Field;
 
 public class HideChatMessages {
+
+    private CustomCommandManager commandManager;
+
+    public HideChatMessages() {
+        this.commandManager = BetterLinkCraft.INSTANCE.getCustomCommandManager();
+    }
     
     @SubscribeEvent
     public void onMessage(ClientChatReceivedEvent event) {

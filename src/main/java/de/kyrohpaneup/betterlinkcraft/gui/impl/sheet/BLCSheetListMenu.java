@@ -42,6 +42,11 @@ public class BLCSheetListMenu extends GuiScreen {
 
         drawCenteredString(this.fontRendererObj, "StratSheets", this.width / 2, 15, 0xFFFFFF);
 
+        if (sheetList.sheets == null || sheetList.sheets.isEmpty()) {
+            drawCenteredString(fontRendererObj, "No data available, try reloading this GUI", width / 2, height / 2, 0xFF6666);
+            drawCenteredString(fontRendererObj, "If this keeps not working, type /sheethelp in the chat.", width / 2, height / 2 + 20, 0xFF6666);
+        }
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -51,6 +56,9 @@ public class BLCSheetListMenu extends GuiScreen {
             this.mc.displayGuiScreen(this.parentScreen);
         }
         if (button.id == 101) {
+            if (SheetManager.SELECTED == null) {
+                return;
+            }
             BLCSettings.updateOption(Option.SELECTED_SHEET, String.valueOf(SheetManager.SELECTED.id));
             SheetManager.DATA = GoogleSheetsAPI.getSheetData(String.valueOf(SheetManager.SELECTED.id));
         }

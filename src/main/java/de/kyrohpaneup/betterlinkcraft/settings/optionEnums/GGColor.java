@@ -9,7 +9,11 @@ public enum GGColor implements OptionEnum {
     GREEN("&2&lG&a&lG"),
     PURPLE("&5&lG&d&lG"),
     BLUE("&3&lG&b&lG"),
-    DARK_BLUE("&1&lG&9&lG");
+    DARK_BLUE("&1&lG&9&lG"),
+    GRAY("&7&lG&f&lG"),
+    DARK_GRAY("&8&lG&7&lG"),
+    BLACK("&0&lG&8&lG"),
+    CUSTOM("&6&lG&e&lG");
 
     String color;
 

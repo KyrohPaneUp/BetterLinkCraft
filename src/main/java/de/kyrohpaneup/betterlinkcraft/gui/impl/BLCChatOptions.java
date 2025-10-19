@@ -1,8 +1,11 @@
 package de.kyrohpaneup.betterlinkcraft.gui.impl;
 
+import de.kyrohpaneup.betterlinkcraft.gui.StringGui;
 import de.kyrohpaneup.betterlinkcraft.gui.elements.BLCOptionButton;
 import de.kyrohpaneup.betterlinkcraft.gui.elements.BLCOptionSlider;
 import de.kyrohpaneup.betterlinkcraft.gui.impl.chat.AutoTextMenu;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.chat.CustomCommandMenu;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.options.BLCSetStringMenu;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
 import de.kyrohpaneup.betterlinkcraft.settings.OptionType;
@@ -14,9 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 
 @SideOnly(Side.CLIENT)
-public class BLCChatOptions extends GuiScreen
+public class BLCChatOptions extends StringGui
 {
-    private static final Option[] options = new Option[] {Option.HIDE_PRAC, Option.HIDE_JOIN, Option.CLEAN_CHAT, Option.GG_COLOR};
+    private static final Option[] options = new Option[] {Option.HIDE_PRAC, Option.HIDE_JOIN, Option.CLEAN_CHAT, Option.GG_COLOR, Option.CUSTOM_GG_TEXT};
     private final GuiScreen parentScreen;
     private String title;
 
@@ -43,6 +46,8 @@ public class BLCChatOptions extends GuiScreen
             ++i;
         }
         this.buttonList.add(new GuiButton(201, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), 150, 20, "AutoText"));
+        i++;
+        this.buttonList.add(new GuiButton(202, this.width / 2 - 155 + i % 2 * 160, this.height / 6 + 24 * (i >> 1), 150, 20, "Custom Commands"));
 
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 120, "Done"));
     }
@@ -54,8 +59,13 @@ public class BLCChatOptions extends GuiScreen
         if (button.enabled) {
             if (button.id < 100 && button instanceof BLCOptionButton) {
                 BLCOptionButton optionButton = (BLCOptionButton) button;
-                if (optionButton.getOption().getType() == OptionType.BOOLEAN || optionButton.getOption().getType() == OptionType.ENUM)
-                BLCSettings.switchOption(optionButton.getOption());
+                Option option = optionButton.getOption();
+                if (option.getType() == OptionType.BOOLEAN || option.getType() == OptionType.ENUM)
+                    BLCSettings.switchOption(optionButton.getOption());
+                if (option.getType() == OptionType.STRING) {
+                    this.mc.displayGuiScreen(new BLCSetStringMenu(option.getStringValue(), this, option));
+                    return;
+                }
                 optionButton.updateName(optionButton.getOption().getDisplayString());
             }
 
@@ -65,6 +75,9 @@ public class BLCChatOptions extends GuiScreen
             }
             if (button.id == 201) {
                 this.mc.displayGuiScreen(new AutoTextMenu(this));
+            }
+            if (button.id == 202) {
+                this.mc.displayGuiScreen(new CustomCommandMenu(this));
             }
         }
     }
@@ -76,5 +89,16 @@ public class BLCChatOptions extends GuiScreen
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void onString(String string, Object object) {
+        if (!(object instanceof Option)) {
+            return;
+        }
+        Option option = (Option) object;
+        if (option.getType() == OptionType.STRING && string != null && !string.replaceAll(" ", "").equals("")) {
+            BLCSettings.updateOption(option, string);
+        }
     }
 }

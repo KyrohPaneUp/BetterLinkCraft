@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
 import de.kyrohpaneup.betterlinkcraft.keybinds.controls.ControlPreset;
 import de.kyrohpaneup.betterlinkcraft.mods.autotext.AutoText;
+import de.kyrohpaneup.betterlinkcraft.mods.autotext.CustomCommand;
 import de.kyrohpaneup.betterlinkcraft.mods.stratreminders.StratReminder;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
@@ -26,6 +27,7 @@ public class ConfigManager {
     private KeybindManager keybindManager;
     private TimerManager timerManager;
     private AutoTextManager autoTextManager;
+    private CustomCommandManager customCommandManager;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -38,6 +40,7 @@ public class ConfigManager {
         this.keybindManager = BetterLinkCraft.INSTANCE.getKeybindManager();
         this.timerManager = BetterLinkCraft.INSTANCE.getTimerManager();
         this.autoTextManager = BetterLinkCraft.INSTANCE.getAutoTextManager();
+        this.customCommandManager = BetterLinkCraft.INSTANCE.getCustomCommandManager();
         File mcDir = Minecraft.getMinecraft().mcDataDir;
         blcFile = new File(mcDir, BetterLinkCraft.NAME);
         if (!blcFile.exists()) {
@@ -51,6 +54,7 @@ public class ConfigManager {
         loadAllPresets();
         loadSpeedrunData();
         loadAutoTextData();
+        loadCustomCommands();
     }
 
     public void createPreset(String name) {
@@ -341,7 +345,6 @@ public class ConfigManager {
             File file = new File(blcFile, autoTextPath);
 
             if (!file.exists()) {
-                timerManager.setSpeedrunMaps(new HashMap<>());
                 return;
             }
 
@@ -355,7 +358,44 @@ public class ConfigManager {
         } catch (IOException e) {
             System.err.println("Error loading File: " + e.getMessage());
             e.printStackTrace();
-            timerManager.setSpeedrunMaps(new HashMap<>());
+        }
+    }
+
+    // Custom Commands Stuff
+    String customCommandsPath = "CustomCommands.json";
+
+    public void saveCustomCommands() {
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            FileWriter writer = new FileWriter(new File(blcFile, customCommandsPath));
+            gson.toJson(customCommandManager.getCustomCommands(), writer);
+            writer.close();
+        } catch (IOException e) {
+            System.err.println("Error saving file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void loadCustomCommands() {
+        try {
+            Gson gson = new Gson();
+            File file = new File(blcFile, customCommandsPath);
+
+            if (!file.exists()) {
+                return;
+            }
+
+            FileReader reader = new FileReader(file);
+            Type listType = new TypeToken<List<CustomCommand>>(){}.getType();
+            List<CustomCommand> loadedCommands = gson.fromJson(reader, listType);
+            reader.close();
+
+            customCommandManager.setCustomCommands(loadedCommands != null ? loadedCommands : new ArrayList<>());
+
+        } catch (IOException e) {
+            System.err.println("Error loading File: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

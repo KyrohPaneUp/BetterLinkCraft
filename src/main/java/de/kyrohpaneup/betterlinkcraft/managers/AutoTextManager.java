@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class AutoTextManager {
 
     private List<AutoText> autoTexts = new ArrayList<>();
     private final Map<Integer, Boolean> keyStates = new HashMap<>();
+    private final Map<Integer, Boolean> mouseButtonStates = new HashMap<>();
 
     public List<AutoText> getAutoTexts() {
         return new ArrayList<>(autoTexts);
@@ -53,17 +55,29 @@ public class AutoTextManager {
     }
 
     @SubscribeEvent
-    public void onKey(InputEvent.KeyInputEvent event) {
+    public void onInput(InputEvent event) {
         for (AutoText autoText : autoTexts) {
             int key = autoText.getKey();
-            boolean isCurrentlyPressed = Keyboard.isKeyDown(key);
-            boolean wasPreviouslyPressed = keyStates.getOrDefault(key, false);
+            if (key >= 0) {
+                boolean isKeyPressed = Keyboard.isKeyDown(key);
+                boolean wasKeyPressed = keyStates.getOrDefault(key, false);
 
-            if (isCurrentlyPressed && !wasPreviouslyPressed) {
-                sendAutoText(autoText);
+                if (isKeyPressed && !wasKeyPressed) {
+                    sendAutoText(autoText);
+                }
+                keyStates.put(key, isKeyPressed);
             }
 
-            keyStates.put(key, isCurrentlyPressed);
+            int mouseButton = autoText.getKey() + 100;
+            if (mouseButton >= 0) {
+                boolean isMousePressed = Mouse.isButtonDown(mouseButton);
+                boolean wasMousePressed = mouseButtonStates.getOrDefault(mouseButton, false);
+
+                if (isMousePressed && !wasMousePressed) {
+                    sendAutoText(autoText);
+                }
+                mouseButtonStates.put(mouseButton, isMousePressed);
+            }
         }
     }
 }
