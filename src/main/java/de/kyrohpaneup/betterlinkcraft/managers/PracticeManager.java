@@ -4,39 +4,56 @@ import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 public class PracticeManager {
 
     ConnectionManager connectionManager = BetterLinkCraft.INSTANCE.getConnectionManager();
     String serverIp = "linkcraft.mcpro.io";
+    LinkCraftManager linkCraftManager = BetterLinkCraft.INSTANCE.getLinkCraftManager();
 
     public void switchServer() {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP player = mc.thePlayer;
+        if (mc.getCurrentServerData() == null) return;
 
-        if (LinkCraftManager.isOnLinkCraft() || LinkCraftManager.isOnJumpCraft()) {
-            if (mc.getCurrentServerData() != null) {
-                serverIp = mc.getCurrentServerData().serverIP.toLowerCase();
-            }
+        String currentServerIp = mc.getCurrentServerData().serverIP;
+
+        if (LinkCraftManager.isOnLinkCraft()) {
+            serverIp = currentServerIp.toLowerCase();
+
             double x = player.posX;
             double y = player.posY;
             double z = player.posZ;
             float yaw = player.rotationYaw;
             float pitch = player.rotationPitch;
-
             String posString = x + " " + y + " " + z + " " + yaw + " " + pitch;
 
-            mc.addScheduledTask(() -> {
-                if (mc.theWorld != null) {
-                    mc.theWorld.sendQuittingDisconnectingPacket();
+            linkCraftManager.sendPluginMessage(() -> {
 
-                    connectionManager.joinServerWithCallback("ugis.pro", () -> mc.thePlayer.sendChatMessage("/tp " + posString));
+                if (LinkCraftManager.NO_PRACTICE) {
+                    StringSelection stringSelection = new StringSelection(posString);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, null);
+                    ChatManager.sendMessageWithPrefix("§aYour coordinates have been copied to your clipboard.");
+                } else {
+                    if (mc.theWorld != null) {
+                        mc.theWorld.sendQuittingDisconnectingPacket();
+                        connectionManager.joinServerWithCallback("ugis.pro", () -> mc.thePlayer.sendChatMessage("/tp " + posString));
+                    }
                 }
             });
-        } else if (mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP != null && mc.getCurrentServerData().serverIP.equalsIgnoreCase("ugis.pro")) {
+
+        } else if (currentServerIp.equalsIgnoreCase("ugis.pro")) {
+            if (LinkCraftManager.NO_PRACTICE) {
+                ChatManager.sendMessageWithPrefix("§cYou can't do this in a no practice map.");
+                return;
+            }
             mc.addScheduledTask(() -> {
                 if (mc.theWorld != null) {
                     mc.theWorld.sendQuittingDisconnectingPacket();
-
                     connectionManager.joinServerWithCallback(serverIp, () -> {});
                 }
             });

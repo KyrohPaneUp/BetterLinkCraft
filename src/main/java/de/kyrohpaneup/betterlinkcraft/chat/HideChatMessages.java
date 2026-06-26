@@ -99,7 +99,7 @@ public class HideChatMessages {
     }
 
     private boolean ignoreMessage(String text) {
-        return text.contains("Party") || text.contains("me ->");
+        return text.contains("Party") || text.contains("Guild") || text.contains("me ->");
     }
 }
 

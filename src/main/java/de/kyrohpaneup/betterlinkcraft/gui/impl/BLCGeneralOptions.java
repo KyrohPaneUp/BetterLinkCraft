@@ -8,6 +8,7 @@ import de.kyrohpaneup.betterlinkcraft.gui.impl.speedrun.SpeedrunCompleteMenu;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
 import de.kyrohpaneup.betterlinkcraft.settings.OptionType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BLCGeneralOptions extends GuiScreen {
 
-    private static final Option[] options = new Option[] {Option.UGIS_PRAC_DELAY, Option.INV_JAM, Option.FULLBRIGHT_ENABLED, Option.TIMER_ENABLED};
+    private static final Option[] options = new Option[] {Option.SHOW_BARRIERS, Option.INV_JAM, Option.FULLBRIGHT_ENABLED, Option.TIMER_ENABLED};
     private final GuiScreen parentScreen;
     private String title;
 
@@ -57,6 +58,10 @@ public class BLCGeneralOptions extends GuiScreen {
                 BLCOptionButton optionButton = (BLCOptionButton) button;
                 if (optionButton.getOption().getType() == OptionType.BOOLEAN || optionButton.getOption().getType() == OptionType.ENUM)
                     BLCSettings.switchOption(optionButton.getOption());
+                if (optionButton.getOption() == Option.SHOW_BARRIERS) {
+                    // the chunks need to be reloaded otherwise the updated barriers will only show in new loaded chunks
+                    Minecraft.getMinecraft().renderGlobal.loadRenderers();
+                }
                 optionButton.updateName(optionButton.getOption().getDisplayString());
             }
 

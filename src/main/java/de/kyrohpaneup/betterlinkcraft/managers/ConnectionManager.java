@@ -19,7 +19,7 @@ public class ConnectionManager {
     private int timeoutTicks = 400; // 20s Timeout
 
     public void joinServerWithCallback(String serverIP, Runnable onComplete) {
-        this.waitTicks = (int) (Option.UGIS_PRAC_DELAY.getDoubleValue() * 20);
+        this.waitTicks = 20;
         this.state = ConnectionState.CONNECTING;
         this.onCompleteAction = onComplete;
         this.timeoutTicks = 400;

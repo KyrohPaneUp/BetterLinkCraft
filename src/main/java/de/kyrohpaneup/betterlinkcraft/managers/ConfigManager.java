@@ -47,7 +47,9 @@ public class ConfigManager {
             blcFile.mkdirs();
         }
         File file = new File(blcFile, profileFileName);
-        if (!file.exists()) return;
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         srFile = new File(blcFile, "StratReminders.json");
 
         loadStratReminders();

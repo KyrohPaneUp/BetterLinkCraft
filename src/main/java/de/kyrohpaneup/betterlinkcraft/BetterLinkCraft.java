@@ -3,7 +3,6 @@ package de.kyrohpaneup.betterlinkcraft;
 import de.kyrohpaneup.betterlinkcraft.chat.HideChatMessages;
 import de.kyrohpaneup.betterlinkcraft.gui.GuiMenuExtension;
 import de.kyrohpaneup.betterlinkcraft.managers.*;
-import de.kyrohpaneup.betterlinkcraft.mods.autotext.CustomCommand;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.FullBright;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.InventoryJam;
 import de.kyrohpaneup.betterlinkcraft.settings.BLCSettings;
@@ -14,6 +13,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.FMLEventChannel;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.io.File;
 
@@ -35,6 +36,7 @@ public class BetterLinkCraft {
     private TimerManager timerManager;
     private AutoTextManager autoTextManager;
     private CustomCommandManager customCommandManager;
+    private LinkCraftManager linkCraftManager;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -45,11 +47,17 @@ public class BetterLinkCraft {
     public void init(FMLInitializationEvent event) {
         configManager = new ConfigManager();
         connectionManager = new ConnectionManager();
+        linkCraftManager = new LinkCraftManager();
         practiceManager = new PracticeManager();
         keybindManager = new KeybindManager();
         timerManager = new TimerManager();
         autoTextManager = new AutoTextManager();
         customCommandManager = new CustomCommandManager();
+
+
+        FMLEventChannel channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(LinkCraftManager.CHANNEL);
+        channel.register(linkCraftManager);
+
         this.srm = new StratReminderManager(configManager);
         MinecraftForge.EVENT_BUS.register(keybindManager);
         MinecraftForge.EVENT_BUS.register(new GuiMenuExtension());
@@ -64,6 +72,7 @@ public class BetterLinkCraft {
         MinecraftForge.EVENT_BUS.register(timerManager);
         MinecraftForge.EVENT_BUS.register(srm);
         MinecraftForge.EVENT_BUS.register(autoTextManager);
+
         commandManager.init();
     }
 
@@ -102,4 +111,8 @@ public class BetterLinkCraft {
     }
 
     public CustomCommandManager getCustomCommandManager() { return customCommandManager; }
+
+    public LinkCraftManager getLinkCraftManager() {
+        return linkCraftManager;
+    }
 }

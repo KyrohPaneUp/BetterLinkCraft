@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "de.kyrohpaneup.betterlinkcraft.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.betterlinkcraft.refmap.json",
+  "mixins": [
+    "client.BlockStateMapperMixin",
+    "blocks.MixinBlockBarrier",
+    "blocks.MixinBlock"
+  ],
+  "client": [],
+  "server": []
+}
