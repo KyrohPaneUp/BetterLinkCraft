@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class ControlPreset {
     private String name;
+    private boolean isPrimary = false;
+    private boolean isSecondary = false;
     private final Map<String, Integer> bindings;
     private float sensitivity;
 
@@ -22,6 +24,22 @@ public class ControlPreset {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public boolean isSecondary() {
+        return isSecondary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
+
+    public void setSecondary(boolean secondary) {
+        isSecondary = secondary;
     }
 
     public Map<String, Integer> getBindings() {

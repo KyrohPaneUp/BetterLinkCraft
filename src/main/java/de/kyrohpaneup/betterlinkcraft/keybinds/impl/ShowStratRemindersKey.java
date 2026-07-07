@@ -1,6 +1,5 @@
 package de.kyrohpaneup.betterlinkcraft.keybinds.impl;
 
-import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
 import de.kyrohpaneup.betterlinkcraft.keybinds.BLCKeybind;
 import de.kyrohpaneup.betterlinkcraft.managers.StratReminderManager;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
@@ -9,11 +8,9 @@ import org.lwjgl.input.Keyboard;
 
 public class ShowStratRemindersKey extends BLCKeybind {
 
-    StratReminderManager srm;
 
     public ShowStratRemindersKey() {
         super("Show Strat Reminders", Keyboard.KEY_GRAVE, "BetterLinkCraft");
-        srm = BetterLinkCraft.INSTANCE.getSrm();
     }
 
     @Override

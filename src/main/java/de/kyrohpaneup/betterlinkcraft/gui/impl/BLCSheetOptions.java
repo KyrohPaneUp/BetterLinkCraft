@@ -1,6 +1,9 @@
 package de.kyrohpaneup.betterlinkcraft.gui.impl;
 
+import de.kyrohpaneup.betterlinkcraft.gui.StringGui;
 import de.kyrohpaneup.betterlinkcraft.gui.elements.BLCOptionButton;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.options.BLCSetStringMenu;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.sheet.BLCResetSheetMenu;
 import de.kyrohpaneup.betterlinkcraft.gui.impl.sheet.BLCSheetListMenu;
 import de.kyrohpaneup.betterlinkcraft.gui.impl.sheet.GuiSheetViewer;
 import de.kyrohpaneup.betterlinkcraft.managers.ChatManager;
@@ -21,7 +24,7 @@ import java.awt.*;
 import java.net.URI;
 import java.util.stream.IntStream;
 
-public class BLCSheetOptions extends GuiScreen {
+public class BLCSheetOptions extends StringGui {
 
     private final GuiScreen parentScreen;
     private String title;
@@ -34,7 +37,7 @@ public class BLCSheetOptions extends GuiScreen {
     public void initGui() {
         this.title = "Sheet Options";
 
-        String[] labels = {"Tag Sheet", "Strat Sheet", "Sheet List", "Sheet Menu"};
+        String[] labels = {"Tag Sheet", "Strat Sheet", "Sheet List", "Sheet Menu", "Set Sheet Link", "Reset Sheet Link"};
         IntStream.range(0, labels.length).forEach(i ->
                 this.buttonList.add(new GuiButton(
                         i + 1,
@@ -97,6 +100,13 @@ public class BLCSheetOptions extends GuiScreen {
 
                 this.mc.displayGuiScreen(SheetManager.SHEET);
             }
+            if (id == 5) {
+                this.mc.displayGuiScreen(new BLCSetStringMenu(Option.SHEET_LINK.getStringValue(), this, 250));
+                SheetManager.reset();
+            }
+            if (id == 6) {
+                mc.displayGuiScreen(new BLCResetSheetMenu(this));
+            }
         }
     }
 
@@ -123,5 +133,10 @@ public class BLCSheetOptions extends GuiScreen {
         linkPart.setChatStyle(style);
 
         mc.thePlayer.addChatMessage(linkPart);
+    }
+
+    @Override
+    public void onString(String string) {
+        BLCSettings.updateOption(Option.SHEET_LINK, string);
     }
 }

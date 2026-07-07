@@ -106,6 +106,54 @@ public class ConfigManager {
         BLCSettings.updateOption(Option.SELECTED_PRESET, preset.getName());
     }
 
+    public ControlPreset getPrimary() {
+        for (ControlPreset preset : KeybindManager.presets) {
+            if (preset.isPrimary()) return preset;
+        }
+        return null;
+    }
+
+    public ControlPreset getSecondary() {
+        for (ControlPreset preset : KeybindManager.presets) {
+            if (preset.isSecondary()) return preset;
+        }
+        return null;
+    }
+
+    public void setPrimary(ControlPreset preset) {
+        File folder = new File(blcFile, profileFileName);
+        if (!folder.exists()) folder.mkdirs();
+
+        for (ControlPreset _preset : KeybindManager.presets) {
+            if (_preset.isPrimary()) {
+                _preset.setPrimary(false);
+                savePreset(_preset);
+            }
+        }
+        preset.setPrimary(true);
+        preset.setSecondary(false);
+        savePreset(preset);
+
+        BLCSettings.updateOption(Option.SELECTED_PRESET, preset.getName());
+    }
+
+    public void setSecondary(ControlPreset preset) {
+        File folder = new File(blcFile, profileFileName);
+        if (!folder.exists()) folder.mkdirs();
+
+        for (ControlPreset _preset : KeybindManager.presets) {
+            if (_preset.isSecondary()) {
+                _preset.setSecondary(false);
+                savePreset(_preset);
+            }
+        }
+        preset.setSecondary(true);
+        preset.setPrimary(false);
+        savePreset(preset);
+
+        BLCSettings.updateOption(Option.SELECTED_PRESET, preset.getName());
+    }
+
     public void deletePreset(ControlPreset preset) {
         if (preset == null) return;
         File folder = new File(blcFile, profileFileName);
@@ -167,6 +215,8 @@ public class ConfigManager {
         }
         presets.sort(Comparator.comparing(ControlPreset::getName));
         KeybindManager.presets = presets;
+        ControlPreset apply = getPrimary() != null ? getPrimary() : KeybindManager.selectedPreset;
+        if (apply != null) keybindManager.applyNoOverwrite(apply);
     }
 
     public ControlPreset loadPreset(File file) {

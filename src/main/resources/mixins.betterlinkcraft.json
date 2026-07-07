@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixins.betterlinkcraft.refmap.json",
   "mixins": [
+    "client.MixinGuiIngame",
     "client.BlockStateMapperMixin",
     "blocks.MixinBlockBarrier",
     "blocks.MixinBlock"

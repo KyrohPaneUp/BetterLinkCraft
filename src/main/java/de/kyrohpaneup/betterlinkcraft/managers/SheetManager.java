@@ -46,4 +46,11 @@ public class SheetManager {
 
         }, "GoogleSheets-Loader").start();
     }
+
+    public static void reset() {
+        SELECTED = null;
+        DATA = null;
+        SHEET = null;
+        INFO_LIST = null;
+    }
 }

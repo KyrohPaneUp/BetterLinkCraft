@@ -16,6 +16,7 @@ public class OpenSheetKey extends BLCKeybind {
 
     @Override
     public void onPressed() {
+        System.out.println("pressed #1");
         if (SheetManager.DATA == null || !String.valueOf(SheetManager.DATA.sheet.id).equals(Option.SELECTED_SHEET.getStringValue())) {
             SheetManager.DATA = GoogleSheetsAPI.getSheetData(Option.SELECTED_SHEET.getStringValue());
         }
@@ -27,11 +28,12 @@ public class OpenSheetKey extends BLCKeybind {
         }
 
         Minecraft.getMinecraft().displayGuiScreen(SheetManager.SHEET);
+        System.out.println("pressed #2");
     }
 
     @Override
     public void onReleased() {
-
+        System.out.println("released");
     }
 
     @Override

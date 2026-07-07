@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BLCGeneralOptions extends GuiScreen {
 
-    private static final Option[] options = new Option[] {Option.SHOW_BARRIERS, Option.INV_JAM, Option.FULLBRIGHT_ENABLED, Option.TIMER_ENABLED};
+    private static final Option[] options = new Option[] {Option.SHOW_BARRIERS, Option.INV_JAM, Option.FULLBRIGHT_ENABLED, Option.HIDE_SCOREBOARD, Option.TIMER_ENABLED};
     private final GuiScreen parentScreen;
     private String title;
 

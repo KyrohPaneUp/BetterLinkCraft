@@ -2,7 +2,6 @@ package de.kyrohpaneup.betterlinkcraft.gui.impl;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 
 import java.io.IOException;
 
@@ -18,7 +17,6 @@ public class BLCOptions extends GuiScreen {
     public void initGui() {
         super.initGui();
         int i = -16;
-        int j = 98;
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + i, "General Settings"));
         this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, "StratReminders"));
         this.buttonList.add(new GuiButton(4, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, "Sheets"));

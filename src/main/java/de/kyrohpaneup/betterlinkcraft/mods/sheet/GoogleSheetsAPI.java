@@ -2,6 +2,9 @@ package de.kyrohpaneup.betterlinkcraft.mods.sheet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.BLCOptions;
+import de.kyrohpaneup.betterlinkcraft.managers.ConfigManager;
+import de.kyrohpaneup.betterlinkcraft.settings.Option;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,7 +15,8 @@ import java.util.List;
 
 public class GoogleSheetsAPI {
 
-    private static final String SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWHlTimjuxv6CDVoldyE4C9xOty4iCclw2pulwiOW2z_7OX4iZKT_riBi2XMX6XLdkCw/exec";
+    public static final String EXPERT_URL = "https://script.google.com/macros/s/AKfycbwdmwxrMKjcCtffs-YQqQlWZwwEocv0yuSMRVrJJUZyW28n0jbZCnFKJQjEyX3FCx5cUA/exec";
+    public static final String BEGINNER_URL = "https://script.google.com/macros/s/AKfycbw2OrQ-CrSeqRmpDyvw9PCxRF7ESDy27SQ6uzvezh5FFC-KrQ0VX9Y6G2RO75QtQ-Wo2g/exec";
     private static final Gson gson = new Gson();
 
     public static class SheetInfo {
@@ -41,7 +45,8 @@ public class GoogleSheetsAPI {
     // Get all sheets from Google Spreadsheet
     public static List<SheetInfo> getAllSheets() {
         try {
-            String url = SCRIPT_URL + "?action=getSheets";
+            String script = Option.SHEET_LINK.getStringValue();
+            String url = script + "?action=getSheets";
             String response = sendGetRequest(url);
 
             APIResponse apiResponse = gson.fromJson(response, APIResponse.class);
@@ -62,7 +67,8 @@ public class GoogleSheetsAPI {
     public static SheetData getSheetData(String sheetIdentifier) {
         String response = null;
         try {
-            String url = SCRIPT_URL + "?action=getData&sheet=" + java.net.URLEncoder.encode(sheetIdentifier, "UTF-8");
+            String script = Option.SHEET_LINK.getStringValue();
+            String url = script + "?action=getData&sheet=" + java.net.URLEncoder.encode(sheetIdentifier, "UTF-8");
             response = sendGetRequest(url);
 
             if (response.isEmpty()) {
@@ -133,39 +139,45 @@ public class GoogleSheetsAPI {
     // HTTP GET request
     private static String sendGetRequest(String urlString) {
         StringBuilder response = new StringBuilder();
+        int redirectsCount = 0;
+        final int MAX_REDIRECTS = 5;
 
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
+            while (redirectsCount < MAX_REDIRECTS) {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
 
-            // Follow redirects
-            connection.setInstanceFollowRedirects(true);
+                connection.setConnectTimeout(30000);
+                connection.setReadTimeout(30000);
+                connection.setInstanceFollowRedirects(false);
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
+                int responseCode = connection.getResponseCode();
 
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                        || responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER) {
+
+                    urlString = connection.getHeaderField("Location");
+                    redirectsCount++;
+                    continue;
                 }
-                in.close();
-            } else {
-                System.err.println("HTTP error: " + responseCode + " for URL: " + urlString);
 
-                // Try to read error stream
-                BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                String errorLine;
-                StringBuilder errorResponse = new StringBuilder();
-                while ((errorLine = errorReader.readLine()) != null) {
-                    errorResponse.append(errorLine);
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                    return response.toString();
+                } else {
+                    System.err.println("HTTP error: " + responseCode + " for URL: " + urlString);
+                    return "";
                 }
-                errorReader.close();
-                System.err.println("Error response: " + errorResponse);
             }
+            System.err.println("Too many redirects.");
         } catch (Exception e) {
             System.err.println("Exception in sendGetRequest: " + e.getMessage());
             e.printStackTrace();

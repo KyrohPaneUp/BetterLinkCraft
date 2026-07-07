@@ -11,6 +11,7 @@ public class BLCSetStringMenu extends GuiScreen {
 
     String string;
     Object object = null;
+    int length = 50;
     private final StringGui parent;
     private GuiTextField textField;
     int bX;
@@ -29,6 +30,12 @@ public class BLCSetStringMenu extends GuiScreen {
         this.parent = parent;
     }
 
+    public BLCSetStringMenu(String string, StringGui parent, int length) {
+        this.string = string;
+        this.parent = parent;
+        this.length = length;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -36,7 +43,7 @@ public class BLCSetStringMenu extends GuiScreen {
         this.buttonList.add(new GuiButton(1, bX, bY + 40, bWidth, bHeight, "Done"));
         this.textField = new GuiTextField(0, fontRendererObj, bX, bY, bWidth, bHeight);
         this.textField.setText(string);
-        this.textField.setMaxStringLength(50);
+        this.textField.setMaxStringLength(250);
         this.textField.setFocused(true);
     }
 

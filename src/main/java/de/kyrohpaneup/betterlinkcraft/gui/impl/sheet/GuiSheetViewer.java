@@ -1,6 +1,10 @@
 package de.kyrohpaneup.betterlinkcraft.gui.impl.sheet;
 
+import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
+import de.kyrohpaneup.betterlinkcraft.gui.impl.strat.CreateStratReminderGui;
 import de.kyrohpaneup.betterlinkcraft.mods.sheet.GoogleSheetsAPI;
+import de.kyrohpaneup.betterlinkcraft.mods.stratreminders.StratReminder;
+import de.kyrohpaneup.betterlinkcraft.settings.Option;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -10,15 +14,22 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GuiSheetViewer extends GuiScreen {
 
     public final GoogleSheetsAPI.SheetData sheetData;
-    private int scrollOffset = 0;
-    private final int baseRowHeight = 20;
+
+    private double scaleFactor = 1.0;
+
     private final int columnWidth = 100;
-    private final int headerHeight = 30;
+
+    private int scaledBaseRowHeight;
+    private int scaledColumnWidth;
+    private int scaledHeaderHeight;
+
+    private int scrollOffset = 0;
     private int startX, startY;
     private int tableWidth, tableHeight;
     private boolean isDraggingScrollbar = false;
@@ -33,18 +44,33 @@ public class GuiSheetViewer extends GuiScreen {
     private int horizontalScrollbarY;
 
     private final List<Integer> rowHeights = new ArrayList<>();
-    // private final List<Integer> rowPositions = new ArrayList<>();
     private int totalContentHeight = 0;
 
     public GuiSheetViewer(GoogleSheetsAPI.SheetData sheetData) {
         this.fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
         this.sheetData = sheetData;
+        updateScaledDimensions();
         calculateRowHeights();
+    }
+
+
+    public void setScale(double newScale) {
+        this.scaleFactor = Math.max(0.25, Math.min(4.0, newScale));
+        updateScaledDimensions();
+        calculateRowHeights();
+        initGui();
+    }
+
+    private void updateScaledDimensions() {
+        int baseRowHeight = 20;
+        this.scaledBaseRowHeight = (int) (baseRowHeight * scaleFactor);
+        this.scaledColumnWidth = (int) (this.columnWidth * scaleFactor);
+        int headerHeight = 30;
+        this.scaledHeaderHeight = (int) (headerHeight * scaleFactor);
     }
 
     private void calculateRowHeights() {
         rowHeights.clear();
-        // rowPositions.clear();
         totalContentHeight = 0;
 
         if (sheetData == null || sheetData.data == null) return;
@@ -56,7 +82,7 @@ public class GuiSheetViewer extends GuiScreen {
                 for (int col = 0; col < sheetData.data[row].length; col++) {
                     String cellText = sheetData.data[row][col] != null ? sheetData.data[row][col] : "";
                     if (!cellText.isEmpty()) {
-                        List<String> lines = wrapText(cellText, columnWidth - 8);
+                        List<String> lines = wrapText(cellText, (int)((columnWidth - 8) * scaleFactor));
                         if (lines != null && !lines.isEmpty()) {
                             maxLines = Math.max(maxLines, lines.size());
                         }
@@ -68,11 +94,13 @@ public class GuiSheetViewer extends GuiScreen {
 
             maxLines = Math.min(maxLines, 10);
 
-            int rowHeight = baseRowHeight + (maxLines - 1) * (fontRendererObj.FONT_HEIGHT + 2);
-            rowHeight = Math.max(baseRowHeight, rowHeight);
+            int scaledFontHeight = (int) (fontRendererObj.FONT_HEIGHT * scaleFactor);
+            int scaledPadding = (int) (2 * scaleFactor);
+
+            int rowHeight = scaledBaseRowHeight + (maxLines - 1) * (scaledFontHeight + scaledPadding);
+            rowHeight = Math.max(scaledBaseRowHeight, rowHeight);
 
             rowHeights.add(rowHeight);
-            // rowPositions.add(totalContentHeight);
             totalContentHeight += rowHeight;
         }
     }
@@ -106,7 +134,7 @@ public class GuiSheetViewer extends GuiScreen {
     }
 
     private int getRowHeight(int row) {
-        if (row < 0 || row >= rowHeights.size()) return baseRowHeight;
+        if (row < 0 || row >= rowHeights.size()) return scaledBaseRowHeight;
         return rowHeights.get(row);
     }
 
@@ -124,14 +152,14 @@ public class GuiSheetViewer extends GuiScreen {
         tableHeight = screenHeight - 100;
 
         scrollbarX = startX + tableWidth - scrollbarWidth;
-        scrollbarY = startY + headerHeight;
-        scrollbarHeight = tableHeight - headerHeight - horizontalScrollbarHeight;
+        scrollbarY = startY + scaledHeaderHeight;
+        scrollbarHeight = tableHeight - scaledHeaderHeight - horizontalScrollbarHeight;
 
         horizontalScrollbarY = startY + tableHeight - horizontalScrollbarHeight;
 
-        maxScrollOffset = Math.max(0, totalContentHeight - (tableHeight - headerHeight - horizontalScrollbarHeight));
+        maxScrollOffset = Math.max(0, totalContentHeight - (tableHeight - scaledHeaderHeight - horizontalScrollbarHeight));
         if (sheetData != null && sheetData.data.length > 0) {
-            int totalColumnsWidth = sheetData.data[0].length * columnWidth;
+            int totalColumnsWidth = sheetData.data[0].length * scaledColumnWidth;
             maxHorizontalScrollOffset = Math.max(0, totalColumnsWidth - (tableWidth - scrollbarWidth - 30));
         }
 
@@ -174,13 +202,22 @@ public class GuiSheetViewer extends GuiScreen {
     }
 
     private void drawHeader() {
-        drawRect(startX, startY, startX + tableWidth, startY + headerHeight, 0x80666666);
+        drawRect(startX, startY, startX + tableWidth, startY + scaledHeaderHeight, 0x80666666);
+        drawRect(startX, startY + scaledHeaderHeight - 1, startX + tableWidth, startY + scaledHeaderHeight, 0xFFCCCCCC);
 
-        drawRect(startX, startY + headerHeight - 1, startX + tableWidth, startY + headerHeight, 0xFFCCCCCC);
+        drawRect(startX, startY, startX + 30, startY + scaledHeaderHeight, 0x80555555);
+        drawRect(startX + 29, startY, startX + 30, startY + scaledHeaderHeight, 0xFF666666);
 
-        drawRect(startX, startY, startX + 30, startY + headerHeight, 0x80555555);
-        drawRect(startX + 29, startY, startX + 30, startY + headerHeight, 0xFF666666);
-        drawCenteredString(fontRendererObj, "Row", startX + 15, startY + (headerHeight - 8) / 2, 0xFFFFFF);
+        drawCenteredString(fontRendererObj, "Row", startX + 15, startY + (scaledHeaderHeight - 8) / 2, 0xFFFFFF);
+
+        ScaledResolution sr = new ScaledResolution(this.mc);
+        int scale = sr.getScaleFactor();
+
+        int scissorX = (startX + 30) * scale;
+        int scissorWidth = (tableWidth - scrollbarWidth - 30) * scale;
+        int scissorHeight = scaledHeaderHeight * scale;
+
+        int scissorY = this.mc.displayHeight - ((startY + scaledHeaderHeight) * scale);
 
         int x = startX + 30 - horizontalScrollOffset;
         if (sheetData.data.length > 0) {
@@ -188,7 +225,7 @@ public class GuiSheetViewer extends GuiScreen {
 
             for (int col = 0; col < totalColumns; col++) {
                 int columnStartX = x;
-                int columnEndX = x + columnWidth;
+                int columnEndX = x + scaledColumnWidth;
 
                 boolean isVisible = columnEndX > startX + 30 && columnStartX < startX + tableWidth - scrollbarWidth;
 
@@ -201,78 +238,59 @@ public class GuiSheetViewer extends GuiScreen {
                     int visibleStartX = Math.max(columnStartX, startX + 30);
                     int visibleEndX = Math.min(columnEndX, startX + tableWidth - scrollbarWidth);
 
-                    drawRect(visibleStartX, startY, visibleEndX, startY + headerHeight, 0x80444444);
+                    drawRect(visibleStartX, startY, visibleEndX, startY + scaledHeaderHeight, 0x80444444);
 
                     if (visibleStartX > startX + 30) {
-                        drawRect(visibleStartX - 1, startY, visibleStartX, startY + headerHeight, 0xFF666666);
+                        drawRect(visibleStartX - 1, startY, visibleStartX, startY + scaledHeaderHeight, 0xFF666666);
                     }
 
                     if (visibleEndX < startX + tableWidth - scrollbarWidth && visibleEndX == columnEndX) {
-                        drawRect(visibleEndX - 1, startY, visibleEndX, startY + headerHeight, 0xFF666666);
+                        drawRect(visibleEndX - 1, startY, visibleEndX, startY + scaledHeaderHeight, 0xFF666666);
                     }
 
                     if (visibleEndX - columnStartX > 8) {
+                        org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_SCISSOR_TEST);
+                        org.lwjgl.opengl.GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+
+                        GlStateManager.pushMatrix();
+                        GlStateManager.translate(columnStartX + 4, startY + (scaledHeaderHeight - (8 * scaleFactor)) / 2, 0);
+                        GlStateManager.scale(scaleFactor, scaleFactor, 1.0);
+
                         String displayText = headerText;
-                        int availableWidth = columnEndX - columnStartX - 8;
+                        int unscaledAvailableWidth = (int)((columnEndX - columnStartX - 8) / scaleFactor);
 
-                        if (fontRendererObj.getStringWidth(displayText) > availableWidth) {
-                            displayText = fontRendererObj.trimStringToWidth(displayText, availableWidth - 3) + "...";
+                        if (fontRendererObj.getStringWidth(displayText) > unscaledAvailableWidth) {
+                            displayText = fontRendererObj.trimStringToWidth(displayText, unscaledAvailableWidth - 3) + "...";
                         }
 
-                        int textX = columnStartX + 4;
-                        int textEndX = textX + fontRendererObj.getStringWidth(displayText);
+                        fontRendererObj.drawString(displayText, 0, 0, 0xFFFFFF);
+                        GlStateManager.popMatrix();
 
-                        if (textEndX > startX + 30 && textX < startX + tableWidth - scrollbarWidth) {
-                            int visibleTextStartX = Math.max(textX, startX + 30);
-                            int visibleTextEndX = Math.min(textEndX, startX + tableWidth - scrollbarWidth);
-
-                            if (textX < startX + 30) {
-                                String visibleText = getVisibleTextFromRight(displayText, visibleTextEndX - visibleTextStartX);
-                                if (!visibleText.isEmpty()) {
-                                    drawString(fontRendererObj, visibleText, visibleTextStartX, startY + (headerHeight - 8) / 2, 0xFFFFFF);
-                                }
-                            }
-                            else if (textEndX > startX + tableWidth - scrollbarWidth) {
-                                int maxVisibleWidth = (startX + tableWidth - scrollbarWidth) - textX - 2;
-                                if (maxVisibleWidth > 3) {
-                                    displayText = fontRendererObj.trimStringToWidth(displayText, maxVisibleWidth - 3) + "...";
-                                    drawString(fontRendererObj, displayText, textX, startY + (headerHeight - 8) / 2, 0xFFFFFF);
-                                }
-                            }
-                            else {
-                                drawString(fontRendererObj, displayText, textX, startY + (headerHeight - 8) / 2, 0xFFFFFF);
-                            }
-                        }
+                        org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_SCISSOR_TEST);
                     }
                 }
-
-                x += columnWidth;
+                x += scaledColumnWidth;
             }
         }
-
-        drawRect(startX + 30 - 1, startY, startX + 30, startY + headerHeight, 0xFF666666);
-    }
-
-    private String getVisibleTextFromRight(String text, int maxWidth) {
-        if (maxWidth <= 3) return "...";
-
-        for (int i = text.length(); i > 0; i--) {
-            String testText = text.substring(text.length() - i);
-            if (fontRendererObj.getStringWidth(testText) <= maxWidth) {
-                return testText;
-            }
-        }
-
-        return "...";
+        drawRect(startX + 30 - 1, startY, startX + 30, startY + scaledHeaderHeight, 0xFF666666);
     }
 
     private void drawData() {
         if (sheetData.data.length <= 1) return;
 
         int startRow = 1;
-        int currentY = startY + headerHeight - scrollOffset;
-        int tableTop = startY + headerHeight;
+        int currentY = startY + scaledHeaderHeight - scrollOffset;
+        int tableTop = startY + scaledHeaderHeight;
         int tableBottom = startY + tableHeight - horizontalScrollbarHeight;
+
+        ScaledResolution sr = new ScaledResolution(this.mc);
+        int scale = sr.getScaleFactor();
+
+        int scissorX = (startX + 30) * scale;
+        int scissorWidth = (tableWidth - scrollbarWidth - 30) * scale;
+        int scissorHeight = (tableHeight - scaledHeaderHeight - horizontalScrollbarHeight) * scale;
+
+        int scissorY = this.mc.displayHeight - (tableBottom * scale);
 
         for (int row = startRow; row < sheetData.data.length; row++) {
             int rowHeight = getRowHeight(row);
@@ -293,8 +311,12 @@ public class GuiSheetViewer extends GuiScreen {
                 drawRect(startX, visibleStartY, startX + tableWidth - scrollbarWidth, visibleEndY, rowColor);
 
                 int numberY = currentY + 6;
-                if (numberY >= tableTop && numberY + fontRendererObj.FONT_HEIGHT <= tableBottom) {
-                    drawString(fontRendererObj, String.valueOf(row), startX + 2, numberY, 0xCCCCCC);
+                if (numberY >= tableTop && numberY + (fontRendererObj.FONT_HEIGHT * scaleFactor) <= tableBottom) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(startX + 2, numberY, 0);
+                    GlStateManager.scale(scaleFactor, scaleFactor, 1.0);
+                    fontRendererObj.drawString(String.valueOf(row), 0, 0, 0xCCCCCC);
+                    GlStateManager.popMatrix();
                 }
 
                 int x = startX + 30 - horizontalScrollOffset;
@@ -302,7 +324,7 @@ public class GuiSheetViewer extends GuiScreen {
 
                 for (int col = 0; col < totalColumns; col++) {
                     int columnStartX = x;
-                    int columnEndX = x + columnWidth;
+                    int columnEndX = x + scaledColumnWidth;
 
                     boolean isVisible = columnEndX > startX + 30 && columnStartX < startX + tableWidth - scrollbarWidth;
 
@@ -315,61 +337,43 @@ public class GuiSheetViewer extends GuiScreen {
                         drawRect(visibleCellStartX, visibleStartY, visibleCellEndX, visibleEndY, rowColor);
 
                         if (!cellText.isEmpty()) {
-                            int availableCellWidth = columnWidth - 8;
-                            List<String> lines = wrapText(cellText, availableCellWidth);
+                            int unscaledAvailableWidth = (int)((scaledColumnWidth - 8) / scaleFactor);
+                            List<String> lines = wrapText(cellText, unscaledAvailableWidth);
+
+                            org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_SCISSOR_TEST);
+                            org.lwjgl.opengl.GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
 
                             for (int lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
-                                int lineY = currentY + 6 + (lineIndex * (fontRendererObj.FONT_HEIGHT + 2));
+                                int lineY = currentY + 6 + (int)(lineIndex * ((fontRendererObj.FONT_HEIGHT + 2) * scaleFactor));
 
-                                if (lineY >= tableTop && lineY + fontRendererObj.FONT_HEIGHT <= tableBottom) {
+                                if (lineY >= tableTop && lineY + (fontRendererObj.FONT_HEIGHT * scaleFactor) <= tableBottom) {
                                     String displayText = lines.get(lineIndex);
 
-                                    int textX = columnStartX + 4;
-                                    int textEndX = textX + fontRendererObj.getStringWidth(displayText);
+                                    GlStateManager.pushMatrix();
+                                    GlStateManager.translate(columnStartX + 4, lineY, 0);
+                                    GlStateManager.scale(scaleFactor, scaleFactor, 1.0);
 
-                                    if (textEndX > startX + 30 && textX < startX + tableWidth - scrollbarWidth) {
-                                        int visibleTextStartX = Math.max(textX, startX + 30);
-                                        int visibleTextEndX = Math.min(textEndX, startX + tableWidth - scrollbarWidth);
-                                        int visibleWidth = visibleTextEndX - visibleTextStartX;
-
-                                        if (textX < startX + 30) {
-                                            if (visibleWidth > 3) {
-                                                String visibleText = getVisibleTextFromRight(displayText, visibleWidth);
-                                                drawString(fontRendererObj, visibleText, visibleTextStartX, lineY, 0xFFFFFF);
-                                            }
-                                        }
-                                        else if (textEndX > startX + tableWidth - scrollbarWidth) {
-                                            if (visibleWidth > 3) {
-                                                displayText = fontRendererObj.trimStringToWidth(displayText, visibleWidth - 3) + "...";
-                                                drawString(fontRendererObj, displayText, textX, lineY, 0xFFFFFF);
-                                            }
-                                        }
-                                        else {
-                                            drawString(fontRendererObj, displayText, textX, lineY, 0xFFFFFF);
-                                        }
-                                    }
+                                    fontRendererObj.drawString(displayText, 0, 0, 0xFFFFFF);
+                                    GlStateManager.popMatrix();
                                 }
                             }
+
+                            org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_SCISSOR_TEST);
                         }
 
                         if (visibleCellEndX < startX + tableWidth - scrollbarWidth) {
                             drawRect(visibleCellEndX - 1, visibleStartY, visibleCellEndX, visibleEndY, 0x40666666);
                         }
-
                         if (visibleCellStartX > startX + 30) {
                             drawRect(visibleCellStartX - 1, visibleStartY, visibleCellStartX, visibleEndY, 0x40666666);
                         }
                     }
-
-                    x += columnWidth;
+                    x += scaledColumnWidth;
                 }
-
                 drawRect(startX, visibleEndY - 1, startX + tableWidth - scrollbarWidth, visibleEndY, 0x40666666);
             }
-
             currentY += rowHeight;
         }
-
 
         drawRect(startX, tableTop - 1, startX + tableWidth - scrollbarWidth, tableTop, 0xFFCCCCCC);
         drawRect(startX + 30 - 1, tableTop, startX + 30, tableBottom, 0xFF666666);
@@ -381,7 +385,7 @@ public class GuiSheetViewer extends GuiScreen {
         drawRect(startX + 30, horizontalScrollbarY, startX + tableWidth - scrollbarWidth, horizontalScrollbarY + horizontalScrollbarHeight, 0x80444444);
 
         int visibleWidth = tableWidth - scrollbarWidth - 30;
-        int totalWidth = sheetData.data[0].length * columnWidth;
+        int totalWidth = sheetData.data[0].length * scaledColumnWidth;
         int thumbWidth = Math.max(20, visibleWidth * visibleWidth / totalWidth);
         int thumbX = startX + 30 + (horizontalScrollOffset * (visibleWidth - thumbWidth) / maxHorizontalScrollOffset);
 
@@ -396,7 +400,7 @@ public class GuiSheetViewer extends GuiScreen {
         drawRect(scrollbarX, scrollbarY, scrollbarX + scrollbarWidth, scrollbarY + scrollbarHeight, 0x80444444);
 
         if (maxScrollOffset > 0) {
-            int visibleHeight = tableHeight - headerHeight;
+            int visibleHeight = tableHeight - scaledHeaderHeight;
             int thumbHeight = Math.max(20, scrollbarHeight * visibleHeight / totalContentHeight);
             int thumbY = scrollbarY + (scrollOffset * (scrollbarHeight - thumbHeight) / maxScrollOffset);
 
@@ -412,9 +416,37 @@ public class GuiSheetViewer extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
+        int tableTop = startY + scaledHeaderHeight;
+        int tableBottom = startY + tableHeight - horizontalScrollbarHeight;
+        int tableLeft = startX;
+        int tableRight = startX + tableWidth - scrollbarWidth;
+
+        if (mouseX >= tableLeft && mouseX <= tableRight && mouseY >= tableTop && mouseY <= tableBottom) {
+
+            int currentY = tableTop - scrollOffset;
+            int startRow = 1;
+
+            for (int row = startRow; row < sheetData.data.length; row++) {
+                int rowHeight = getRowHeight(row);
+
+                if (mouseY >= currentY && mouseY < currentY + rowHeight) {
+
+                    List<String> rowData = Arrays.asList(sheetData.data[row]);
+
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                        handleStratReminder(rowData);
+                    }
+
+                    break;
+                }
+
+                currentY += rowHeight;
+            }
+        }
+
         if (maxHorizontalScrollOffset > 0) {
             int visibleWidth = tableWidth - scrollbarWidth - 30;
-            int totalWidth = sheetData.data[0].length * columnWidth;
+            int totalWidth = sheetData.data[0].length * scaledColumnWidth;
             int thumbWidth = Math.max(20, visibleWidth * visibleWidth / totalWidth);
             int thumbX = startX + 30 + (horizontalScrollOffset * (visibleWidth - thumbWidth) / maxHorizontalScrollOffset);
 
@@ -425,7 +457,7 @@ public class GuiSheetViewer extends GuiScreen {
         }
 
         if (maxScrollOffset > 0) {
-            int visibleHeight = tableHeight - headerHeight;
+            int visibleHeight = tableHeight - scaledHeaderHeight;
             int thumbHeight = Math.max(20, scrollbarHeight * visibleHeight / totalContentHeight);
             int thumbY = scrollbarY + (scrollOffset * (scrollbarHeight - thumbHeight) / maxScrollOffset);
 
@@ -440,6 +472,7 @@ public class GuiSheetViewer extends GuiScreen {
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         isDraggingScrollbar = false;
+        isDraggingHorizontalScrollbar = false;
     }
 
     @Override
@@ -448,7 +481,7 @@ public class GuiSheetViewer extends GuiScreen {
 
         if (isDraggingHorizontalScrollbar && maxHorizontalScrollOffset > 0) {
             int visibleWidth = tableWidth - scrollbarWidth - 30;
-            int thumbWidth = Math.max(20, (int)(visibleWidth * (float)visibleWidth / (sheetData.data[0].length * columnWidth)));
+            int thumbWidth = Math.max(20, (int)(visibleWidth * (float)visibleWidth / (sheetData.data[0].length * scaledColumnWidth)));
             int relativeX = mouseX - startX - thumbWidth / 2;
             float scrollPercent = (float) relativeX / (visibleWidth - thumbWidth);
             horizontalScrollOffset = (int) (scrollPercent * maxHorizontalScrollOffset);
@@ -456,7 +489,7 @@ public class GuiSheetViewer extends GuiScreen {
         }
 
         if (isDraggingScrollbar && maxScrollOffset > 0) {
-            int visibleHeight = tableHeight - headerHeight;
+            int visibleHeight = tableHeight - scaledHeaderHeight;
             int thumbHeight = Math.max(20, scrollbarHeight * visibleHeight / totalContentHeight);
             int relativeY = mouseY - scrollbarY - thumbHeight / 2;
             float scrollPercent = (float) relativeY / (scrollbarHeight - thumbHeight);
@@ -471,7 +504,13 @@ public class GuiSheetViewer extends GuiScreen {
 
         int mouseWheelDelta = Mouse.getEventDWheel();
         if (mouseWheelDelta != 0) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+                if (mouseWheelDelta > 0) {
+                    setScale(scaleFactor + 0.1);
+                } else {
+                    setScale(scaleFactor - 0.1);
+                }
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                 if (mouseWheelDelta > 0) {
                     horizontalScrollOffset = Math.max(0, horizontalScrollOffset - 30);
                 } else {
@@ -498,11 +537,47 @@ public class GuiSheetViewer extends GuiScreen {
         } else if (keyCode == 208) { // DOWN
             scrollOffset = Math.min(maxScrollOffset, scrollOffset + 20);
         } else if (keyCode == 201) { // PAGE UP
-            scrollOffset = Math.max(0, scrollOffset - (tableHeight - headerHeight) / 2);
+            scrollOffset = Math.max(0, scrollOffset - (tableHeight - scaledHeaderHeight) / 2);
         } else if (keyCode == 209) { // PAGE DOWN
-            scrollOffset = Math.min(maxScrollOffset, scrollOffset + (tableHeight - headerHeight) / 2);
+            scrollOffset = Math.min(maxScrollOffset, scrollOffset + (tableHeight - scaledHeaderHeight) / 2);
         }
 
         super.keyTyped(typedChar, keyCode);
+    }
+
+    public void handleStratReminder(List<String> data) {
+
+        String map = Option.SELECTED_SR_MAP.getStringValue();
+        int positionInt = Option.REMINDER_POSITION.getIntValue();
+        int facingInt = Option.REMINDER_FACING.getIntValue();
+        int setupInt = Option.REMINDER_SETUP.getIntValue();
+        int stratInt = Option.REMINDER_STRAT.getIntValue();
+        int strafeInt = Option.REMINDER_STRAFE.getIntValue();
+        int commentInt = Option.REMINDER_COMMENT.getIntValue();
+
+        String position = (positionInt > 0 && data.size() >= positionInt) ? data.get(positionInt - 1) : "";
+        String facing = (facingInt > 0 && data.size() >= facingInt) ? data.get(facingInt - 1) : "";
+        String setup = (setupInt > 0 && data.size() >= setupInt) ? data.get(setupInt - 1) : "";
+        String comment = (commentInt > 0 && data.size() >= commentInt) ? data.get(commentInt - 1) : "";
+
+        StringBuilder stratBuilder = new StringBuilder();
+
+        if (stratInt > 0 && data.size() >= stratInt) {
+            stratBuilder.append(data.get(stratInt - 1));
+        }
+
+        if (strafeInt > 0 && data.size() >= strafeInt) {
+            if (stratInt > 0 && data.size() >= stratInt) {
+                stratBuilder.append(" ");
+            }
+            stratBuilder.append(data.get(strafeInt - 1));
+        }
+
+        StratReminder reminder = new StratReminder(null, map, position, facing, setup, stratBuilder.toString(), comment,
+                (int) mc.thePlayer.posX,
+                (int) mc.thePlayer.posY,
+                (int) mc.thePlayer.posZ);
+
+        this.mc.displayGuiScreen(new CreateStratReminderGui(BetterLinkCraft.INSTANCE.getSrm().toSimpleMap(reminder), false));
     }
 }

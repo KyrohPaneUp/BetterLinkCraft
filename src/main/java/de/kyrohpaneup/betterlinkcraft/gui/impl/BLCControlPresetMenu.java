@@ -35,6 +35,9 @@ public class BLCControlPresetMenu extends StringGui {
         int bottomY = this.height - 28;
 
         this.buttonList.clear();
+        this.buttonList.add(new GuiButton(104, this.width / 2 - 100, bottomY - 50, 100, 20, "Set Primary"));
+        this.buttonList.add(new GuiButton(105, this.width / 2 - 100 + 100 + 1, bottomY - 50, 100, 20, "Set Secondary"));
+
         this.buttonList.add(new GuiButton(101, this.width / 2 - 100, bottomY - 25, buttonWidth, 20, "Create"));
         this.buttonList.add(new GuiButton(102, this.width / 2 - 100 + buttonWidth + 1, bottomY - 25, buttonWidth, 20, "Rename"));
         this.buttonList.add(new GuiButton(103, this.width / 2 - 100 + (buttonWidth * 2) + 2, bottomY - 25, buttonWidth, 20, "Delete"));
@@ -73,6 +76,18 @@ public class BLCControlPresetMenu extends StringGui {
                 this.presetList.refreshList();
             }
         }
+        if (button.id == 104) { // Set primary
+            ControlPreset selected = KeybindManager.selectedPreset;
+            if (selected != null) {
+                configManager.setPrimary(selected);
+            }
+        }
+        if (button.id == 105) { // Set secondary
+            ControlPreset selected = KeybindManager.selectedPreset;
+            if (selected != null) {
+                configManager.setSecondary(selected);
+            }
+        }
     }
 
     @Override
@@ -102,7 +117,7 @@ public class BLCControlPresetMenu extends StringGui {
 
         public PresetList(Minecraft mc) {
             super(mc, BLCControlPresetMenu.this.width, BLCControlPresetMenu.this.height,
-                    40, BLCControlPresetMenu.this.height - 60, 22);
+                    40, BLCControlPresetMenu.this.height - 85, 22);
             this.mc = mc;
             this.presets = KeybindManager.presets;
         }
@@ -140,6 +155,17 @@ public class BLCControlPresetMenu extends StringGui {
             int color = 0xFFFFFF;
 
             mc.fontRendererObj.drawString(name, x + 5, y + 6, color);
+
+            String suffix = "";
+            if (preset.isPrimary()) suffix = " (Primary)";
+            if (preset.isSecondary()) suffix = " (Secondary)";
+
+            if (!suffix.isEmpty()) {
+                int nameWidth = mc.fontRendererObj.getStringWidth(name);
+                int suffixColor = 0xA0A0A0;
+
+                mc.fontRendererObj.drawString(suffix, x + 5 + nameWidth, y + 6, suffixColor);
+            }
         }
     }
 }

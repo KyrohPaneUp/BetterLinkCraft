@@ -153,6 +153,13 @@ public class BLCSettings {
                     updateOption(option, optionEnum);
                 }
                 break;
+            case INT:
+                if (option.getMaxValue() == null || option.getMinValue() == null || option.getValue() == null) return;
+                int max = (int) option.getMaxValue();
+                int current = option.getIntValue();
+                int newVal = 0;
+                if (current != max) newVal = current + 1;
+                updateOption(option, newVal);
         }
     }
 

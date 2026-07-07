@@ -10,12 +10,12 @@ public class SwitchToUgisKey extends BLCKeybind {
     PracticeManager practiceManager = BetterLinkCraft.INSTANCE.getPracticeManager();
 
     public SwitchToUgisKey() {
-        super("Quick Ugis Practice", Keyboard.KEY_P, "BetterLinkCraft");
+        super("Copy Coordinates", Keyboard.KEY_P, "BetterLinkCraft");
     }
 
     @Override
     public void onPressed() {
-        practiceManager.switchServer();
+        practiceManager.copyCoordinates();
     }
 
     @Override

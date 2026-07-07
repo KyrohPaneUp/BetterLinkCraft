@@ -3,6 +3,7 @@ package de.kyrohpaneup.betterlinkcraft.managers;
 import de.kyrohpaneup.betterlinkcraft.BetterLinkCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -13,6 +14,21 @@ public class PracticeManager {
     ConnectionManager connectionManager = BetterLinkCraft.INSTANCE.getConnectionManager();
     String serverIp = "linkcraft.mcpro.io";
     LinkCraftManager linkCraftManager = BetterLinkCraft.INSTANCE.getLinkCraftManager();
+
+    public void copyCoordinates() {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayerSP player = mc.thePlayer;
+
+        double x = player.posX;
+        double y = player.posY;
+        double z = player.posZ;
+        float yaw = player.rotationYaw;
+        float pitch = player.rotationPitch;
+        String posString = x + " " + y + " " + z + " " + yaw + " " + pitch;
+
+        GuiScreen.setClipboardString(posString);
+        ChatManager.sendMessageWithPrefix("§aYour coordinates have been copied to your clipboard.");
+    }
 
     public void switchServer() {
         Minecraft mc = Minecraft.getMinecraft();

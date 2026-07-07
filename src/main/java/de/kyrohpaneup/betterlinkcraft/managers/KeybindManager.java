@@ -35,6 +35,7 @@ public class KeybindManager {
         keybinds.add(new StartTimerKey());
         keybinds.add(new StopTimerKey());
         keybinds.add(new OpenBLCSettingsKey());
+        keybinds.add(new ChangePresetKey());
 
         for (BLCKeybind keybind : keybinds) {
             ClientRegistry.registerKeyBinding(keybind.getKeyBinding());
@@ -69,6 +70,10 @@ public class KeybindManager {
         if (selectedPreset != null && !preset.getName().equalsIgnoreCase(selectedPreset.getName())) {
             configManager.updatePreset(selectedPreset);
         }
+        applyNoOverwrite(preset);
+    }
+
+    public void applyNoOverwrite(ControlPreset preset) {
         selectedPreset = preset;
         for (KeyBinding kb : Minecraft.getMinecraft().gameSettings.keyBindings) {
             if (preset.getBindings().containsKey(kb.getKeyDescription())) {

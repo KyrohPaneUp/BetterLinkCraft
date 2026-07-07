@@ -15,12 +15,21 @@ public enum Option {
     SELECTED_PRESET(OptionType.STRING, "", "Selected Preset", "Selected Control Preset"),
     SELECTED_SHEET(OptionType.STRING, "", "Selected StratSheet", "ID of the stratsheet"),
     SELECTED_SR_MAP(OptionType.STRING, "default", "Current Map", "This defines which StratReminders will be shown"),
+    SHEET_LINK(OptionType.STRING, "https://script.google.com/macros/s/AKfycbwdmwxrMKjcCtffs-YQqQlWZwwEocv0yuSMRVrJJUZyW28n0jbZCnFKJQjEyX3FCx5cUA/exec", "Sheet Link", "Defines where the sheet data is taken from"),
     SHOW_REMINDERS(OptionType.ENUM, ShowReminders.HOLD, "Show Reminders", "HOLD -> Hold to key to show the reminders; TOGGLE -> press the key once to toggle seeing the reminders"),
     TIMER_ENABLED(OptionType.BOOLEAN, false, "Show Timer", "displays a timer in the top right which can be started/stopped via hotkeys"),
     SELECTED_SPEEDRUN_MAP(OptionType.STRING, "default", "Current Map", "This defines which Speedrun Segments will be used"),
     FULLBRIGHT_ENABLED(OptionType.BOOLEAN, false, "Full Bright", "Turns the gamma up a lot"),
     //UGIS_PRAC_DELAY(OptionType.DOUBLE, 2.0, 0.0, 5.0, "Quick Practice Delay", "Delay before teleporting to your LC Location when using quick practice"),
     SHOW_BARRIERS(OptionType.BOOLEAN, false, "Show Barriers", "Let's you see barrier blocks"),
+    HIDE_SCOREBOARD(OptionType.BOOLEAN, false, "Hide scoreboard", "Disables the scoreboard"),
+    REMINDER_POSITION(OptionType.INT, 3, 0, 15, "Postion", "Copies the set column into a StratReminder"),
+    REMINDER_FACING(OptionType.INT, 4, 0, 15, "Facing", "Copies the set column into a StratReminder"),
+    REMINDER_SETUP(OptionType.INT, 5, 0, 15, "Setup", "Copies the set column into a StratReminder"),
+    REMINDER_STRAT(OptionType.INT, 6, 0, 15, "Strat", "Copies the set column into a StratReminder"),
+    REMINDER_STRAFE(OptionType.INT, 7, 0, 15, "Strafe", "Copies the set column into a StratReminder"),
+    REMINDER_TURN(OptionType.INT, 8, 0, 15, "Turn", "Copies the set column into a StratReminder"),
+    REMINDER_COMMENT(OptionType.INT, 10, 0, 15, "Comment", "Copies the set column into a StratReminder"),
     CUSTOM_GG_TEXT(OptionType.STRING, "&6&lG&e&lG", "Custom GG", "Custom GG");
 
     private final OptionType type;
