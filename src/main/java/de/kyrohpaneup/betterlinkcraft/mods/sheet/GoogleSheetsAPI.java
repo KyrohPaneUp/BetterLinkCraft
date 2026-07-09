@@ -1,9 +1,6 @@
 package de.kyrohpaneup.betterlinkcraft.mods.sheet;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import de.kyrohpaneup.betterlinkcraft.gui.impl.BLCOptions;
-import de.kyrohpaneup.betterlinkcraft.managers.ConfigManager;
 import de.kyrohpaneup.betterlinkcraft.settings.Option;
 
 import java.io.BufferedReader;
@@ -84,7 +81,6 @@ public class GoogleSheetsAPI {
                 APIResponse apiResponse = gson.fromJson(response, APIResponse.class);
 
                 if (apiResponse.success && apiResponse.data != null) {
-                    // Unescape special characters in the data
                     String[][] unescapedData = unescapeData(apiResponse.data);
 
                     SheetData sheetData = new SheetData();
@@ -120,7 +116,6 @@ public class GoogleSheetsAPI {
                 for (int j = 0; j < data[i].length; j++) {
                     String cell = data[i][j];
                     if (cell != null) {
-                        // Unescape special characters
                         result[i][j] = cell.replace("\\n", "\n")
                                 .replace("\\r", "\r")
                                 .replace("\\t", "\t")
@@ -215,7 +210,6 @@ public class GoogleSheetsAPI {
             String[][] data = gson.fromJson(dataArrayJson, String[][].class);
 
             if (data != null) {
-                // Unescape the data
                 sheetData.data = unescapeData(data);
 
                 try {
