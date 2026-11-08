@@ -2,6 +2,7 @@ package de.kyrohpaneup.betterlinkcraft;
 
 import de.kyrohpaneup.betterlinkcraft.chat.HideChatMessages;
 import de.kyrohpaneup.betterlinkcraft.gui.GuiMenuExtension;
+import de.kyrohpaneup.betterlinkcraft.inventory.BetterLCCreativeTab;
 import de.kyrohpaneup.betterlinkcraft.managers.*;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.FullBright;
 import de.kyrohpaneup.betterlinkcraft.mods.impl.InventoryJam;
@@ -37,6 +38,7 @@ public class BetterLinkCraft {
     private AutoTextManager autoTextManager;
     private CustomCommandManager customCommandManager;
     private LinkCraftManager linkCraftManager;
+    private BetterLCCreativeTab creativeTab;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -53,6 +55,7 @@ public class BetterLinkCraft {
         timerManager = new TimerManager();
         autoTextManager = new AutoTextManager();
         customCommandManager = new CustomCommandManager();
+        creativeTab = new BetterLCCreativeTab();
 
 
         FMLEventChannel channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(LinkCraftManager.CHANNEL);

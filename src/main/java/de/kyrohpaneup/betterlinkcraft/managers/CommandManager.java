@@ -1,10 +1,7 @@
 package de.kyrohpaneup.betterlinkcraft.managers;
 
 import de.kyrohpaneup.betterlinkcraft.command.BLCCommand;
-import de.kyrohpaneup.betterlinkcraft.command.impl.ConvertCommand;
-import de.kyrohpaneup.betterlinkcraft.command.impl.GGCommand;
-import de.kyrohpaneup.betterlinkcraft.command.impl.SheetCommand;
-import de.kyrohpaneup.betterlinkcraft.command.impl.SheetHelpCommand;
+import de.kyrohpaneup.betterlinkcraft.command.impl.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +22,7 @@ public class CommandManager {
 
     public void init() {
         this.ggCommand = new GGCommand();
-        commands.addAll(Arrays.asList(new ConvertCommand(), new SheetHelpCommand(), new SheetCommand()));
+        commands.addAll(Arrays.asList(new ConvertCommand(), new SheetHelpCommand(), new SheetCommand(), new BLCTeleportCommand()));
 
         registerCommands();
         MinecraftForge.EVENT_BUS.register(this);
