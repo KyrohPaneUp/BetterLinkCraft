@@ -21,7 +21,7 @@ public class GuiSheetViewer extends GuiScreen {
 
     public final GoogleSheetsAPI.SheetData sheetData;
 
-    private double scaleFactor = 1.0;
+    private double scaleFactor = Option.GUI_SCALE_FACTOR.getDoubleValue();
 
     private final int columnWidth = 100;
 

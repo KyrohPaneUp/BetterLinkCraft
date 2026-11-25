@@ -28,7 +28,7 @@ public class BLCSheetOptions extends StringGui {
 
     private final GuiScreen parentScreen;
     private String title;
-
+    public static boolean GuiScaleFactorChanged = false;
     public BLCSheetOptions(GuiScreen parentScreen) {
         this.parentScreen = parentScreen;
     }
@@ -37,7 +37,8 @@ public class BLCSheetOptions extends StringGui {
     public void initGui() {
         this.title = "Sheet Options";
 
-        String[] labels = {"Tag Sheet", "Strat Sheet", "Sheet List", "Sheet Menu", "Set Sheet Link", "Reset Sheet Link"};
+        String[] labels = {"Tag Sheet", "Strat Sheet", "Sheet List", "Sheet Menu", "Set Sheet Link", "Reset Sheet Link",
+                "Gui Scale Factor: " + Option.GUI_SCALE_FACTOR.getDoubleValue() * 100 + "%"};
         IntStream.range(0, labels.length).forEach(i ->
                 this.buttonList.add(new GuiButton(
                         i + 1,
@@ -96,6 +97,9 @@ public class BLCSheetOptions extends StringGui {
                     SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
                 } else if (SheetManager.SHEET.sheetData != SheetManager.DATA) {
                     SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
+                } else if (GuiScaleFactorChanged) {
+                    SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
+                    GuiScaleFactorChanged = false;
                 }
 
                 this.mc.displayGuiScreen(SheetManager.SHEET);
@@ -106,6 +110,14 @@ public class BLCSheetOptions extends StringGui {
             }
             if (id == 6) {
                 mc.displayGuiScreen(new BLCResetSheetMenu(this));
+            }
+            if (id == 7) {
+                GuiScaleFactorChanged = true;
+                double newScale = (Option.GUI_SCALE_FACTOR.getDoubleValue() % 2 + 0.2) * 100;
+                long percentage = Math.round(newScale);
+                newScale = percentage / 100.0;
+                BLCSettings.updateOption(Option.GUI_SCALE_FACTOR, newScale);
+                this.mc.displayGuiScreen(new BLCSheetOptions(this.parentScreen));
             }
         }
     }
