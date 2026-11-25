@@ -1,5 +1,6 @@
 package de.kyrohpaneup.betterlinkcraft.keybinds.impl;
 
+import de.kyrohpaneup.betterlinkcraft.gui.impl.BLCSheetOptions;
 import de.kyrohpaneup.betterlinkcraft.gui.impl.sheet.GuiSheetViewer;
 import de.kyrohpaneup.betterlinkcraft.keybinds.BLCKeybind;
 import de.kyrohpaneup.betterlinkcraft.managers.SheetManager;
@@ -24,6 +25,9 @@ public class OpenSheetKey extends BLCKeybind {
             SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
         } else if (SheetManager.SHEET.sheetData != SheetManager.DATA) {
             SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
+        } else if (BLCSheetOptions.GuiScaleFactorChanged) {
+            SheetManager.SHEET = new GuiSheetViewer(SheetManager.DATA);
+            BLCSheetOptions.GuiScaleFactorChanged = false;
         }
 
         Minecraft.getMinecraft().displayGuiScreen(SheetManager.SHEET);
