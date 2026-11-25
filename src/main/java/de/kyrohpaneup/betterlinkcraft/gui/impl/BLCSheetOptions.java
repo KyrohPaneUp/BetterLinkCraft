@@ -28,7 +28,7 @@ public class BLCSheetOptions extends StringGui {
 
     private final GuiScreen parentScreen;
     private String title;
-    private static boolean GuiScaleFactorChanged = false;
+    public static boolean GuiScaleFactorChanged = false;
     public BLCSheetOptions(GuiScreen parentScreen) {
         this.parentScreen = parentScreen;
     }

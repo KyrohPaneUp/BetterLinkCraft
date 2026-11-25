@@ -31,7 +31,7 @@ public enum Option {
     REMINDER_TURN(OptionType.INT, 8, 0, 15, "Turn", "Copies the set column into a StratReminder"),
     REMINDER_COMMENT(OptionType.INT, 10, 0, 15, "Comment", "Copies the set column into a StratReminder"),
     CUSTOM_GG_TEXT(OptionType.STRING, "&6&lG&e&lG", "Custom GG", "Custom GG"),
-    GUI_SCALE_FACTOR(OptionType.DOUBLE, 1.0, 0.2, 2.0, "Gui Scale Factor", "Gui Scale Factor");
+    GUI_SCALE_FACTOR(OptionType.DOUBLE, 1.0, 0.1, 2.0, "Gui Scale Factor", "Gui Scale Factor");
 
     private final OptionType type;
     private Object value;
